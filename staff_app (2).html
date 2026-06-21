@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fd5000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>VivaGym Staff · Incidencias</title>
+<style>
+  :root {
+    --brand: #fd5000;
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text2: #475569;
+    --text3: #94a3b8;
+    --ok: #16a34a;
+    --ko: #dc2626;
+    --warn: #f59e0b;
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(0,0,0,.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--brand);
+    color: #fff;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(253,80,0,.3);
+  }
+  .header-logo {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,.2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .header-title { font-size: 17px; font-weight: 700; }
+  .header-sub { font-size: 12px; opacity: .8; }
+  .header-user {
+    margin-left: auto;
+    font-size: 12px;
+    opacity: .9;
+    text-align: right;
+  }
+
+  /* ── LOGIN ── */
+  #loginScreen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .login-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .login-logo {
+    font-size: 48px;
+    margin-bottom: 8px;
+  }
+  .login-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .login-sub {
+    font-size: 13px;
+    color: var(--text3);
+    margin-bottom: 24px;
+  }
+  .field-group { margin-bottom: 14px; text-align: left; }
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text2);
+    margin-bottom: 5px;
+    display: block;
+  }
+  .field-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s;
+    background: var(--bg);
+  }
+  .field-input:focus { border-color: var(--brand); background: #fff; }
+  .btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .2s, transform .1s;
+  }
+  .btn-primary:active { transform: scale(.98); opacity: .9; }
+  .login-err {
+    color: var(--ko);
+    font-size: 13px;
+    margin-top: 10px;
+    min-height: 18px;
+  }
+
+  /* ── MAIN APP ── */
+  #app { display: none; }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 68px;
+    z-index: 90;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 13px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text3);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .tab-btn.active {
+    color: var(--brand);
+    border-bottom-color: var(--brand);
+  }
+
+  /* ── CONTENT ── */
+  .content { padding: 16px; max-width: 600px; margin: 0 auto; }
+
+  /* ── FORM ── */
+  .form-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .form-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .select-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    background: var(--bg);
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+  .select-input:focus { border-color: var(--brand); background-color: #fff; }
+
+  .textarea-input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    background: var(--bg);
+    line-height: 1.5;
+  }
+  .textarea-input:focus { border-color: var(--brand); background: #fff; }
+
+  /* ── FOTO ── */
+  .foto-area {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    position: relative;
+  }
+  .foto-area:hover { border-color: var(--brand); background: rgba(253,80,0,.02); }
+  .foto-area input[type=file] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .foto-icon { font-size: 32px; margin-bottom: 6px; }
+  .foto-text { font-size: 13px; color: var(--text3); }
+  .foto-hint { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+  .foto-preview {
+    margin-top: 12px;
+    position: relative;
+    display: inline-block;
+  }
+  .foto-preview img {
+    max-height: 140px;
+    max-width: 100%;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    display: block;
+  }
+  .foto-remove {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--ko);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  /* ── SUBMIT ── */
+  .btn-submit {
+    width: 100%;
+    padding: 15px;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .2s;
+    margin-top: 4px;
+  }
+  .btn-submit:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-submit:not(:disabled):active { opacity: .85; }
+
+  /* ── STATUS ── */
+  .status-msg {
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 12px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+  .status-msg.ok { background: rgba(22,163,74,.1); color: var(--ok); display: flex; }
+  .status-msg.ko { background: rgba(220,38,38,.1); color: var(--ko); display: flex; }
+  .status-msg.loading { background: rgba(253,80,0,.08); color: var(--brand); display: flex; }
+
+  /* ── LISTA ── */
+  .inc-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+    border-left: 4px solid var(--border);
+  }
+  .inc-card.cat-admin { border-left-color: #3b82f6; }
+  .inc-card.cat-inst  { border-left-color: #f59e0b; }
+  .inc-card.cat-equip { border-left-color: #a855f7; }
+
+  .inc-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+  .inc-cat-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 99px;
+    letter-spacing: .5px;
+    white-space: nowrap;
+  }
+  .cat-admin .inc-cat-badge { background: rgba(59,130,246,.12); color: #3b82f6; }
+  .cat-inst  .inc-cat-badge { background: rgba(245,158,11,.12); color: #b45309; }
+  .cat-equip .inc-cat-badge { background: rgba(168,85,247,.12); color: #7c3aed; }
+
+  .inc-estado {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .estado-abierta { background: rgba(220,38,38,.1); color: var(--ko); }
+  .estado-curso   { background: rgba(245,158,11,.1); color: #b45309; }
+  .estado-resuelta { background: rgba(22,163,74,.1); color: var(--ok); }
+
+  .inc-desc {
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .inc-meta {
+    font-size: 11px;
+    color: var(--text3);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .inc-foto-thumb {
+    margin-top: 10px;
+  }
+  .inc-foto-thumb img {
+    max-height: 80px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text3);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+  .empty-state .msg { font-size: 14px; }
+
+  /* ── SPINNER ── */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid rgba(253,80,0,.3);
+    border-top-color: var(--brand);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">🏋️</div>
+    <div class="login-title">VivaGym Staff</div>
+    <div class="login-sub">Gestión de Incidencias</div>
+    <div class="field-group">
+      <label class="field-label">Usuario</label>
+      <input class="field-input" id="loginUser" type="text" placeholder="usuario" autocomplete="username">
+    </div>
+    <div class="field-group">
+      <label class="field-label">Contraseña</label>
+      <input class="field-input" id="loginPass" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="header">
+    <div class="header-logo">🔧</div>
+    <div>
+      <div class="header-title">Incidencias</div>
+      <div class="header-sub" id="headerClub">VivaGym Sevilla</div>
+    </div>
+    <div class="header-user" id="headerUser"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tabNueva" onclick="showTab('nueva')">➕ Nueva</button>
+    <button class="tab-btn" id="tabMis" onclick="showTab('mis')">📋 Mis incidencias</button>
+  </div>
+
+  <!-- TAB NUEVA -->
+  <div class="content" id="panelNueva">
+    <div class="form-card">
+      <div class="form-title">📝 Nueva Incidencia</div>
+
+      <div class="field-group">
+        <label class="field-label">Club *</label>
+        <select class="select-input" id="fClub">
+          <option value="">Selecciona club...</option>
+          <option value="Los Remedios">Los Remedios</option>
+          <option value="Nervión">Nervión</option>
+          <option value="Camas">Camas</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Tu nombre *</label>
+        <input class="field-input" id="fStaff" type="text" placeholder="Nombre y apellido">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Categoría *</label>
+        <select class="select-input" id="fCategoria">
+          <option value="">Selecciona categoría...</option>
+          <option value="Administrativa">📋 Administrativa</option>
+          <option value="Instalación">🏗️ Instalación</option>
+          <option value="Equipamiento">🏋️ Equipamiento</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Descripción *</label>
+        <textarea class="textarea-input" id="fDesc" placeholder="Describe la incidencia con detalle: qué ocurre, dónde, desde cuándo..."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Foto (opcional)</label>
+        <div class="foto-area" id="fotoArea">
+          <input type="file" accept="image/*" id="fFoto" onchange="onFotoChange(event)">
+          <div class="foto-icon">📷</div>
+          <div class="foto-text">Toca para adjuntar foto</div>
+          <div class="foto-hint">JPG, PNG · máx 5MB</div>
+        </div>
+        <div class="foto-preview" id="fotoPreview" style="display:none">
+          <img id="fotoImg" src="">
+          <button class="foto-remove" onclick="removeFoto()">✕</button>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="btnEnviar" onclick="enviarIncidencia()">
+        📤 Enviar Incidencia
+      </button>
+
+      <div class="status-msg" id="statusMsg">
+        <div class="spinner" id="statusSpinner" style="display:none"></div>
+        <span id="statusText"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB MIS INCIDENCIAS -->
+  <div class="content" id="panelMis" style="display:none">
+    <div id="listContainer">
+      <div class="empty-state">
+        <div class="spinner" style="margin:0 auto 12px"></div>
+        <div class="msg">Cargando...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const SUPA_URL = 'https://bwhcmcycvymynbismkvp.supabase.co';
+const SUPA_KEY = 'sb_publishable_Z_dGItnZE90mbpoO42co6Q_maY9310O';
+
+// Credenciales staff
+const USERS = {
+  'stafflre':  { pass: 'stafflre26',  club: 'Los Remedios', nombre: 'Staff Los Remedios' },
+  'staffner':  { pass: 'staffner26',  club: 'Nervión',       nombre: 'Staff Nervión' },
+  'staffcms':  { pass: 'staffcms26',  club: 'Camas',         nombre: 'Staff Camas' },
+  'lremanager':{ pass: 'lre2026',     club: 'Los Remedios',  nombre: 'Manager Los Remedios' },
+  'nervimanager':{ pass: 'ner2026',   club: 'Nervión',       nombre: 'Manager Nervión' },
+  'cmsmanager':{ pass: 'cms2026',     club: 'Camas',         nombre: 'Manager Camas' },
+};
+
+let currentUser = null;
+let fotoDataURL = null;
+
+// ── SUPABASE ──
+async function supaInsert(row) {
+  const resp = await fetch(`${SUPA_URL}/rest/v1/incidencias`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': `Bearer ${SUPA_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify([row])
+  });
+  if (!resp.ok) {
+    const err = await resp.text();
+    throw new Error(`Supabase ${resp.status}: ${err.slice(0,200)}`);
+  }
+  return resp.json();
+}
+
+async function supaGetByClub(club) {
+  const enc = encodeURIComponent(club);
+  const resp = await fetch(
+    `${SUPA_URL}/rest/v1/incidencias?club=eq.${enc}&order=created_at.desc&limit=100`,
+    {
+      headers: {
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`,
+      }
+    }
+  );
+  if (!resp.ok) throw new Error(`Supabase ${resp.status}`);
+  return resp.json();
+}
+
+// ── LOGIN ──
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim().toLowerCase();
+  const p = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginErr');
+
+  if (!USERS[u] || USERS[u].pass !== p) {
+    errEl.textContent = '❌ Usuario o contraseña incorrectos';
+    return;
+  }
+
+  currentUser = { username: u, ...USERS[u] };
+  errEl.textContent = '';
+
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('headerClub').textContent = currentUser.club;
+  document.getElementById('headerUser').innerHTML = `${currentUser.nombre}<br><span style="opacity:.7;font-size:11px">@${u}</span>`;
+  document.getElementById('fClub').value = currentUser.club;
+
+  // Pre-fill staff name if manager
+  if (u.includes('manager')) {
+    document.getElementById('fStaff').value = currentUser.nombre;
+  }
+}
+
+document.getElementById('loginUser').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('loginPass').focus();
+});
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// ── TABS ──
+function showTab(tab) {
+  document.getElementById('panelNueva').style.display = tab === 'nueva' ? 'block' : 'none';
+  document.getElementById('panelMis').style.display   = tab === 'mis'   ? 'block' : 'none';
+  document.getElementById('tabNueva').className = 'tab-btn' + (tab === 'nueva' ? ' active' : '');
+  document.getElementById('tabMis').className   = 'tab-btn' + (tab === 'mis'   ? ' active' : '');
+  if (tab === 'mis') loadMisIncidencias();
+}
+
+// ── FOTO ──
+function onFotoChange(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    alert('La foto supera 5MB. Por favor elige una imagen más pequeña.');
+    ev.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    fotoDataURL = e.target.result;
+    document.getElementById('fotoImg').src = fotoDataURL;
+    document.getElementById('fotoPreview').style.display = 'inline-block';
+    document.getElementById('fotoArea').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeFoto() {
+  fotoDataURL = null;
+  document.getElementById('fotoImg').src = '';
+  document.getElementById('fotoPreview').style.display = 'none';
+  document.getElementById('fotoArea').style.display = 'block';
+  document.getElementById('fFoto').value = '';
+}
+
+// ── ENVIAR ──
+async function enviarIncidencia() {
+  const club      = document.getElementById('fClub').value.trim();
+  const staff     = document.getElementById('fStaff').value.trim();
+  const categoria = document.getElementById('fCategoria').value;
+  const desc      = document.getElementById('fDesc').value.trim();
+
+  // Validate
+  if (!club || !staff || !categoria || !desc) {
+    mostrarStatus('ko', '⚠️ Rellena todos los campos obligatorios');
+    return;
+  }
+
+  const btn = document.getElementById('btnEnviar');
+  btn.disabled = true;
+  mostrarStatus('loading', 'Enviando incidencia...');
+
+  // Build row — only columns that exist in Supabase table
+  const now = new Date().toISOString();
+  const row = {
+    id:          'INC-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,5).toUpperCase(),
+    club,
+    staff,
+    categoria,
+    descripcion: desc,
+    estado:      'Abierta',
+    prioridad:   'Sin asignar',
+    fuente:      'staff_app',
+    foto:        fotoDataURL || null,
+    created_at:  now,
+    updated_at:  now,
+    depto:       categoria === 'Administrativa' ? 'AT.CLIENTE' : 'Facilities',
+    seguimiento: '',
+    ref_sige:    '',
+    fecha:       new Date().toLocaleDateString('es-ES'),
+  };
+
+  try {
+    await supaInsert(row);
+
+    mostrarStatus('ok', '✅ Incidencia enviada correctamente');
+    resetForm();
+
+  } catch(err) {
+    console.error('Error Supabase:', err);
+    // Fallback: save locally so nothing is lost
+    const local = JSON.parse(localStorage.getItem('inc_pending') || '[]');
+    local.push(row);
+    localStorage.setItem('inc_pending', JSON.stringify(local));
+    mostrarStatus('ko', `❌ Error al enviar: ${err.message}. Guardado localmente para reintento.`);
+  }
+
+  btn.disabled = false;
+}
+
+function resetForm() {
+  document.getElementById('fCategoria').value = '';
+  document.getElementById('fDesc').value = '';
+  document.getElementById('fStaff').value = currentUser?.username?.includes('manager') ? currentUser.nombre : '';
+  removeFoto();
+}
+
+function mostrarStatus(tipo, texto) {
+  const el = document.getElementById('statusMsg');
+  const sp = document.getElementById('statusSpinner');
+  const tx = document.getElementById('statusText');
+  el.className = 'status-msg ' + tipo;
+  sp.style.display = tipo === 'loading' ? 'block' : 'none';
+  tx.textContent = texto;
+  if (tipo === 'ok') setTimeout(() => { el.className = 'status-msg'; }, 4000);
+}
+
+// ── MIS INCIDENCIAS ──
+async function loadMisIncidencias() {
+  const container = document.getElementById('listContainer');
+  container.innerHTML = '<div class="empty-state"><div class="spinner" style="margin:0 auto 12px"></div><div class="msg">Cargando...</div></div>';
+
+  try {
+    const items = await supaGetByClub(currentUser.club);
+
+    // Also try to push any pending local items
+    const pending = JSON.parse(localStorage.getItem('inc_pending') || '[]');
+    if (pending.length > 0) {
+      const retry = [];
+      for (const p of pending) {
+        try { await supaInsert(p); } catch { retry.push(p); }
+      }
+      localStorage.setItem('inc_pending', JSON.stringify(retry));
+    }
+
+    if (!items.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">📋</div>
+          <div class="msg">No hay incidencias registradas en ${currentUser.club}</div>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = items.map(inc => {
+      const catClass = inc.categoria === 'Administrativa' ? 'cat-admin'
+                     : inc.categoria === 'Instalación'   ? 'cat-inst'
+                     : 'cat-equip';
+      const estClass = inc.estado === 'Abierta'  ? 'estado-abierta'
+                     : inc.estado === 'En curso' ? 'estado-curso'
+                     : 'estado-resuelta';
+      const fecha = inc.created_at ? new Date(inc.created_at).toLocaleDateString('es-ES', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : inc.fecha || '';
+      const fotoHTML = inc.foto ? `<div class="inc-foto-thumb"><img src="${inc.foto}" alt="foto"></div>` : '';
+      const prioHTML = inc.prioridad && inc.prioridad !== 'Sin asignar'
+        ? `<span>⚡ ${inc.prioridad}</span>` : '';
+
+      return `
+        <div class="inc-card ${catClass}">
+          <div class="inc-header">
+            <span class="inc-cat-badge">${inc.categoria || '—'}</span>
+            <span class="inc-estado ${estClass}">${inc.estado}</span>
+          </div>
+          <div class="inc-desc">${inc.descripcion || ''}</div>
+          ${fotoHTML}
+          <div class="inc-meta">
+            <span>👤 ${inc.staff || '—'}</span>
+            <span>📅 ${fecha}</span>
+            ${prioHTML}
+          </div>
+        </div>`;
+    }).join('');
+
+  } catch(err) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">❌</div>
+        <div class="msg">Error al cargar: ${err.message}</div>
+      </div>`;
+  }
+}
+</script>
+</body>
+</html>
