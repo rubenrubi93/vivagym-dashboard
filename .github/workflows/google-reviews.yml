@@ -1,1 +1,41 @@
-name: Google Reviews Sevilla\non:\n  workflow_dispatch:\n  schedule:\n    - cron: '15 6 * * *'\njobs:\n  update:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: write\n    steps:\n      - uses: actions/checkout@v4\n      - run: echo 'Dashboard preparado; falta conectar una fuente autorizada de Google Business.'\n
+name: Google Reviews Sevilla
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 6 * * *"
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Consultar Google Reviews
+        env:
+          FETCHLAYER_API_KEY: ${{ secrets.FETCHLAYER_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request
+          key=os.environ.get("FETCHLAYER_API_KEY")
+          if not key: raise SystemExit("Falta FETCHLAYER_API_KEY en GitHub Secrets.")
+          clubs=[
+            ("Nervión","https://www.google.com/maps/search/?api=1&query=VivaGym%20Nervion%20Sevilla"),
+            ("Los Remedios","https://www.google.com/maps/search/?api=1&query=VivaGym%20Los%20Remedios%20Sevilla"),
+            ("Dos Hermanas","https://www.google.com/maps/search/?api=1&query=VivaGym%20Dos%20Hermanas%20Sevilla"),
+            ("Camas","https://www.google.com/maps/search/?api=1&query=VivaGym%20Camas%20Sevilla"),
+            ("Alcalá Plaza","https://www.google.com/maps/search/?api=1&query=VivaGym%20Alcala%20Plaza%20Sevilla"),
+            ("Sevilla Este","https://www.google.com/maps/search/?api=1&query=VivaGym%20Sevilla%20Este")]
+          out=[]
+          for name,url in clubs:
+            payload=json.dumps({"placeIdOrUrl":url,"pages":1,"maxReviews":1,"reviewsPerPage":1,"sortBy":"mostRelevant"}).encode()
+            req=urllib.request.Request("https://api.fetchlayer.dev/google-maps/reviews",data=payload,headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"},method="POST")
+            with urllib.request.urlopen(req,timeout=60) as r: out.append({"name":name,"url":url,"response":json.load(r)})
+          open("google-reviews/data/fetchlayer-last.json","w",encoding="utf-8").write(json.dumps(out,ensure_ascii=False,indent=2))
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add google-reviews/data/fetchlayer-last.json
+          git diff --cached --quiet || git commit -m "Update Google Reviews source data"
+          git push
