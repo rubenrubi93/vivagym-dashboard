@@ -1,0 +1,1 @@
+name: Google Reviews Sevilla\non:\n  workflow_dispatch:\n  schedule:\n    - cron: '15 6 * * *'\njobs:\n  update:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: write\n    steps:\n      - uses: actions/checkout@v4\n      - run: echo 'Dashboard preparado; falta conectar una fuente autorizada de Google Business.'\n
