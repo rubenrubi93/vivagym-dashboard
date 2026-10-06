@@ -1,0 +1,48 @@
+{
+  "updated": "2026-10-06T15:57:00+02:00",
+  "source": "Snapshot inicial · pendiente de fuente autorizada",
+  "data": [
+    {
+      "name": "Nervión",
+      "rating": 4.9,
+      "reviews": 850,
+      "delta_reviews": null,
+      "url": "https://www.google.com/maps/search/?api=1&query=VivaGym%20Nervion%20Sevilla"
+    },
+    {
+      "name": "Los Remedios",
+      "rating": 4.6,
+      "reviews": 1863,
+      "delta_reviews": null,
+      "url": "https://www.google.com/maps/search/?api=1&query=VivaGym%20Los%20Remedios%20Sevilla"
+    },
+    {
+      "name": "Dos Hermanas",
+      "rating": 4.6,
+      "reviews": 1036,
+      "delta_reviews": null,
+      "url": "https://www.google.com/maps/search/?api=1&query=VivaGym%20Dos%20Hermanas%20Sevilla"
+    },
+    {
+      "name": "Camas",
+      "rating": 4.5,
+      "reviews": 804,
+      "delta_reviews": null,
+      "url": "https://www.google.com/maps/search/?api=1&query=VivaGym%20Camas%20Sevilla"
+    },
+    {
+      "name": "Alcalá Plaza",
+      "rating": 4.4,
+      "reviews": 768,
+      "delta_reviews": null,
+      "url": "https://www.google.com/maps/search/?api=1&query=VivaGym%20Alcala%20Plaza%20Sevilla"
+    },
+    {
+      "name": "Sevilla Este",
+      "rating": 4.1,
+      "reviews": 687,
+      "delta_reviews": null,
+      "url": "https://www.google.com/maps/search/?api=1&query=VivaGym%20Sevilla%20Este"
+    }
+  ]
+}
